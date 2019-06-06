@@ -1,0 +1,513 @@
+\documentclass{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{ctex}
+\usepackage{graphicx}
+\usetikzlibrary{automata,positioning}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ (\hmwkClassInstructor\ \hmwkClassTime): \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+\newenvironment{homeworkProblem}{
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Meeting\ \#3}
+\newcommand{\hmwkDueDate}{May , 07 2019}
+\newcommand{\hmwkClass}{GAN}
+\newcommand{\hmwkClassTime}{Section A}
+\newcommand{\hmwkClassInstructor}{Student Zhaokun Zhou}
+\newcommand{\hmwkAuthorName}{Zhaokun Zhou}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 10:30pm}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+    \vspace{3in}
+}
+
+\author{\textbf{\hmwkAuthorName}}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\begin{homeworkProblem}
+
+    一.给定四个公式的证明 \\
+      \quad 符号说明：\\
+      ${W_{jk}}^{(l)}$ 是第L-1层的第个K神经元到第L层第J个神经元的权值 \\
+      ${b_{j}}^{(l)}$ 是第L层的第J个神经元的偏置（在此次推导中设每层偏置量相同）\\
+      ${a_{j}}^{(l)}$ 是第L层的第J个神经元的激活函数输出值 \\
+      ${\delta_{j}}^{(l)}$ 定义为第L层的第J个神经元的误差值 \\
+      ${z_{j}}^{(l)}$ 定义为第L层的第J个神经元的输入 \\
+      J为代价函数 \\
+      $$ {a_{j}}^{(l)} = \sigma(\sum_k{W_{jk}}^{(l)}{a_{k}}^{(l-1)} + {b_{j}}^{(l)})\eqno{1}$$
+      $$ {{z_j}^{(l)}} = {W_{jk}}^{(l)}{a_{j}}^{(l-1)} + {b_{j}}^{(l)} \eqno{2}$$
+      将式1转化成矩阵形式： \\
+      $$ a^{(l)} = \sigma(\sum_kW^{(l)}a^{(l-1)} + b^{(l)})\eqno{3}$$
+      其中$a^{(l)}$是j行列向量，$W^{(l)}$是j行k列矩阵，$a^{(l-1)}$是k 行列向量，$b^{(l)}$是j行列向量。\\
+      将式2转化成矩阵形式： \\
+      $$ z^{(l)} = W^{(l)}a^{(l-1)} + b^{(l)} \eqno{4}$$
+      结合函数链式求导法则与上述公式，得到以下四个公式： \\
+      公式一; \\
+      $$ {\delta_{j}}^{(l)} = \frac{\partial{J}}{\partial{{{z_j}^{(l)}}}} = \frac{\partial{J}}{\partial{{a_{j}}^{(l)}}} \cdot \frac{\partial{{a_{j}}^{(l)}}}{\partial{{{z_j}^{(l)}}}} = \frac{\partial{J}}{\partial{{a_{j}}^{(l)}}} \cdot \sigma^{'}({{z_j}^{(l)}}) \eqno{5}$$
+      将式5转化成矩阵形式： \\
+      $$\delta^{(l)} = \bigtriangledown_aC \odot \sigma^{'}({z^{(l)}})\eqno{6}$$
+      其中$\delta^{(l)}$为j行1列，$\bigtriangleup_aC $为j行1列，$\sigma^{'}({z^{(l)}})$为j行1列。 \\ \\
+      公式二：\\
+      已知$\delta^{(l+1)}$求$\delta^{(l)}$： \\
+      $$ \delta^{(l)} = ({W^{l+1})}^T{\delta^{(l+1)}} \odot \sigma^{'}({z^{(l)}})\eqno{7} $$
+      \\ 公式三： \\
+      基于以上公式，对权重求偏导得到： \\
+      $$\frac{\partial{J(W,b)}}{\partial{{W_{jk}}^{(l)}}} = {\delta_{j}}^{(l)}{a_{k}}^{(l-1)} \eqno8 $$
+      \\ 公式四： \\
+      对偏置求偏导得到： \\
+       $$\frac{\partial{J(W,b)}}{\partial{{b_{j}}^{(l)}}} = {\delta_{j}}^{(l)}\eqno9 $$
+       将上述8式重写为矩阵形式： \\
+       $$ \bigtriangledown_{W^{(l)}}J(W,b) = \delta^{(l)}{a^{(l-1)}}^T \eqno10 $$
+       将上述9式重写为矩阵形式： \\
+       $$ \bigtriangledown_{b^{(l)}}J(W,b) = \delta^{(l)} \eqno11 $$
+
+    \textbf{完整的迭代小批量随机梯度下降算法：} \\
+    1.设定$\bigtriangleup W^{(l)} := 0 ,\bigtriangleup b^{(l)} := 0 $ 为误差积累项 \\
+   2.for i = 1:m
+   \par 2a. 使用BP算法计算 10,11
+   \par2b. 设置$\bigtriangleup W^{(l)} := bigtriangleup W^{(l)} + \bigtriangledown_{W^{(l)}}J(W,b)$
+   \par2c. 设置$\bigtriangleup b^{(l)} := bigtriangleup b^{(l)} + \bigtriangledown_{b^{(l)}}J(W,b)$ \\
+   3.更新参数
+   $$ W^{(l)} := W^{(l)} - \alpha[(\frac{1}{m})\bigtriangleup W^{(l)} + \lambda W^{(l)}]$$
+   $$ b^{(l)} := b^{(l)} - \alpha[(\frac{1}{m})\bigtriangleup b^{(l)}]$$
+   其中$\alpha $为学习率。 \\
+
+\begin{figure}
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[scale=0.4]{MLP.png}\\
+  \caption{3-layer MLP}
+\end{figure}
+
+ 代价函数：$J(W,b) = [\frac{1}{m}\sum_1^m(\frac{1}{2}{\left\|h_{W,b}(x^{(i)}-y^{(i)})\right\|}^2)] + \frac{\lambda}{2}\sum_{l=1}^2 \sum_{j=1}^{S_l} \sum_{k=1}^{S_{l+1}}{W_{jk}^{(l)}}^2 $ \\
+ 实例计算：$ \frac{\partial{J(W,b)}}{\partial{{W_{11}}^{(3)}}} = [\frac{1}{m}\sum_1^m\frac{\partial{J(W,b;x^i,y^i)}}] + \lambda {W_{11}}^{(3)} $ \\
+ 上式= $\delta_1^3 \cdot a_1^2$ \\
+ 所以上式$= \frac{\partial{J}}{\partial{{a_{1}}^{(3)}}} \cdot \frac{\partial{{a_{1}}^{(3)}}}{\partial{{{z_1}^{(3)}}}} = ({a_{1}}^{(3)} - y^i) \cdot {a_{1}}^{(3)}(1-{a_{1}}^{(3)})\cdot {a_{1}}^{(2)}$  \\
+ 同理： \\
+ $$ \frac{\partial{J(W,b)}}{\partial{{W_{12}}^{(3)}}} = ({a_{1}}^{(3)} - y^i) \cdot {a_{1}}^{(3)}(1-{a_{1}}^{(3)})\cdot {a_{2}}^{(2)}$$
+ $$ \frac{\partial{J(W,b)}}{\partial{{W_{13}}^{(3)}}} = ({a_{1}}^{(3)} - y^i) \cdot {a_{1}}^{(3)}(1-{a_{1}}^{(3)})\cdot {a_{3}}^{(2)}$$
+第二层权值参数： \\
+$$\frac{\partial{J(W,b)}}{\partial{{W_{11}}^{(2)}}} = [\frac{1}{m}\sum_1^m\frac{\partial{J(W,b;x^i,y^i)}}] + \lambda {W_{11}}^{(3)} = {W_{11}}^{(3)}\delta_1^{(3)} \cdot {a_{1}}^{(2)}(1-{a_{1}}^{(2)}) \cdot x_1 $$
+同理：
+$$\frac{\partial{J(W,b)}}{\partial{{W_{21}}^{(2)}}} = {W_{12}}^{(3)}\delta_1^{(3)} \cdot {a_{2}}^{(2)}(1-{a_{2}}^{(2)}) \cdot x_1 $$
+$$\frac{\partial{J(W,b)}}{\partial{{W_{31}}^{(2)}}} = {W_{13}}^{(3)}\delta_1^{(3)} \cdot {a_{3}}^{(2)}(1-{a_{3}}^{(2)}) \cdot x_1 $$
+$$\frac{\partial{J(W,b)}}{\partial{{W_{12}}^{(2)}}} = {W_{11}}^{(3)}\delta_1^{(3)} \cdot {a_{1}}^{(2)}(1-{a_{1}}^{(2)}) \cdot x_2 $$
+$$\frac{\partial{J(W,b)}}{\partial{{W_{22}}^{(2)}}} = {W_{12}}^{(3)}\delta_1^{(3)} \cdot {a_{2}}^{(2)}(1-{a_{2}}^{(2)}) \cdot x_2 $$
+$$\frac{\partial{J(W,b)}}{\partial{{W_{32}}^{(2)}}} = {W_{13}}^{(3)}\delta_1^{(3)} \cdot {a_{3}}^{(2)}(1-{a_{3}}^{(2)}) \cdot x_2 $$
+$$\frac{\partial{J(W,b)}}{\partial{{W_{13}}^{(2)}}} = {W_{11}}^{(3)}\delta_1^{(3)} \cdot {a_{1}}^{(2)}(1-{a_{1}}^{(2)}) \cdot x_3 $$
+$$\frac{\partial{J(W,b)}}{\partial{{W_{23}}^{(2)}}} = {W_{12}}^{(3)}\delta_1^{(3)} \cdot {a_{2}}^{(2)}(1-{a_{2}}^{(2)}) \cdot x_3 $$
+$$\frac{\partial{J(W,b)}}{\partial{{W_{33}}^{(2)}}} = {W_{13}}^{(3)}\delta_1^{(3)} \cdot {a_{3}}^{(2)}(1-{a_{3}}^{(2)}) \cdot x_3 $$
+
+
+\end{homeworkProblem}
+
+\pagebreak
+
+\begin{homeworkProblem}
+WGAN论文理解: \\
+
+   此文章与作者第一篇文章《Towards Principled Methods for Training Generative Adversarial Networks》内容联系紧密。相比于原始GAN改进了四处\\
+判别器最后一层去掉sigmoid \\
+生成器和判别器的loss不取log \\
+每次更新判别器的参数之后把它们的绝对值截断到不超过一个固定常数c \\
+不要用基于动量的优化算法（包括momentum和Adam），推荐RMSProp，SGD也行 \\
+
+
+    \begin{figure}[here]
+        \centering
+        \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+            \node[state, accepting, initial] (q_0)   {$q_0$};
+            \node[state] (q_1) [right=of q_0] {$q_1$};
+            \node[state] (q_2) [right=of q_1] {$q_2$};
+            \node[state] (q_3) [right=of q_2] {$q_3$};
+            \node[state] (q_4) [right=of q_3] {$q_4$};
+            \path[->]
+                (q_0)
+                    edge [loop above] node {0} (q_0)
+                    edge node {1} (q_1)
+                (q_1)
+                    edge node {0} (q_2)
+                    edge [bend right=-30] node {1} (q_3)
+                (q_2)
+                    edge [bend left] node {1} (q_0)
+                    edge [bend right=-30] node {0} (q_4)
+                (q_3)
+                    edge node {1} (q_2)
+                    edge [bend left] node {0} (q_1)
+                (q_4)
+                    edge node {0} (q_3)
+                    edge [loop below] node {1} (q_4);
+        \end{tikzpicture}
+        \caption{DFA, \(A\), this is really beautiful, ya know?}
+        \label{fig:multiple5}
+    \end{figure}
+
+    \textbf{Justification}
+    \\
+
+    Take a given binary number, \(x\). Since there are only two inputs to our
+    state machine, \(x\) can either become \(x0\) or \(x1\). When a 0 comes
+    into the state machine, it is the same as taking the binary number and
+    multiplying it by two. When a 1 comes into the machine, it is the same as
+    multipying by two and adding one.
+    \\
+
+    Using this knowledge, we can construct a transition table that tell us
+    where to go:
+
+    \begin{table}[ht]
+        \centering
+        \begin{tabular}{c || c | c | c | c | c}
+            & \(x \mod 5 = 0\)
+            & \(x \mod 5 = 1\)
+            & \(x \mod 5 = 2\)
+            & \(x \mod 5 = 3\)
+            & \(x \mod 5 = 4\)
+            \\
+            \hline
+            \(x0\) & 0 & 2 & 4 & 1 & 3 \\
+            \(x1\) & 1 & 3 & 0 & 2 & 4 \\
+        \end{tabular}
+    \end{table}
+
+    Therefore on state \(q_0\) or (\(x \mod 5 = 0\)), a transition line should
+    go to state \(q_0\) for the input 0 and a line should go to state \(q_1\)
+    for input 1. Continuing this gives us the Figure~\ref{fig:multiple5}.
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+    Write part of \alg{Quick-Sort($list, start, end$)}
+
+    \begin{algorithm}[]
+        \begin{algorithmic}[1]
+            \Function{Quick-Sort}{$list, start, end$}
+                \If{$start \geq end$}
+                    \State{} \Return{}
+                \EndIf{}
+                \State{} $mid \gets \Call{Partition}{list, start, end}$
+                \State{} \Call{Quick-Sort}{$list, start, mid - 1$}
+                \State{} \Call{Quick-Sort}{$list, mid + 1, end$}
+            \EndFunction{}
+        \end{algorithmic}
+        \caption{Start of QuickSort}
+    \end{algorithm}
+\end{homeworkProblem}
+
+\pagebreak
+
+\begin{homeworkProblem}
+    Suppose we would like to fit a straight line through the origin, i.e.,
+    \(Y_i = \beta_1 x_i + e_i\) with \(i = 1, \ldots, n\), \(\E [e_i] = 0\),
+    and \(\Var [e_i] = \sigma^2_e\) and \(\Cov[e_i, e_j] = 0, \forall i \neq
+    j\).
+    \\
+
+    \part
+
+    Find the least squares esimator for \(\hat{\beta_1}\) for the slope
+    \(\beta_1\).
+    \\
+
+    \solution
+
+    To find the least squares estimator, we should minimize our Residual Sum
+    of Squares, RSS:
+
+    \[
+        \begin{split}
+            RSS &= \sum_{i = 1}^{n} {(Y_i - \hat{Y_i})}^2
+            \\
+            &= \sum_{i = 1}^{n} {(Y_i - \hat{\beta_1} x_i)}^2
+        \end{split}
+    \]
+
+    By taking the partial derivative in respect to \(\hat{\beta_1}\), we get:
+
+    \[
+        \pderiv{
+            \hat{\beta_1}
+        }{RSS}
+        = -2 \sum_{i = 1}^{n} {x_i (Y_i - \hat{\beta_1} x_i)}
+        = 0
+    \]
+
+    This gives us:
+
+    \[
+        \begin{split}
+            \sum_{i = 1}^{n} {x_i (Y_i - \hat{\beta_1} x_i)}
+            &= \sum_{i = 1}^{n} {x_i Y_i} - \sum_{i = 1}^{n} \hat{\beta_1} x_i^2
+            \\
+            &= \sum_{i = 1}^{n} {x_i Y_i} - \hat{\beta_1}\sum_{i = 1}^{n} x_i^2
+        \end{split}
+    \]
+
+    Solving for \(\hat{\beta_1}\) gives the final estimator for \(\beta_1\):
+
+    \[
+        \begin{split}
+            \hat{\beta_1}
+            &= \frac{
+                \sum {x_i Y_i}
+            }{
+                \sum x_i^2
+            }
+        \end{split}
+    \]
+
+    \pagebreak
+
+    \part
+
+    Calculate the bias and the variance for the estimated slope
+    \(\hat{\beta_1}\).
+    \\
+
+    \solution
+
+    For the bias, we need to calculate the expected value
+    \(\E[\hat{\beta_1}]\):
+
+    \[
+        \begin{split}
+            \E[\hat{\beta_1}]
+            &= \E \left[ \frac{
+                \sum {x_i Y_i}
+            }{
+                \sum x_i^2
+            }\right]
+            \\
+            &= \frac{
+                \sum {x_i \E[Y_i]}
+            }{
+                \sum x_i^2
+            }
+            \\
+            &= \frac{
+                \sum {x_i (\beta_1 x_i)}
+            }{
+                \sum x_i^2
+            }
+            \\
+            &= \frac{
+                \sum {x_i^2 \beta_1}
+            }{
+                \sum x_i^2
+            }
+            \\
+            &= \beta_1 \frac{
+                \sum {x_i^2 \beta_1}
+            }{
+                \sum x_i^2
+            }
+            \\
+            &= \beta_1
+        \end{split}
+    \]
+
+    Thus since our estimator's expected value is \(\beta_1\), we can conclude
+    that the bias of our estimator is 0.
+    \\
+
+    For the variance:
+
+    \[
+        \begin{split}
+            \Var[\hat{\beta_1}]
+            &= \Var \left[ \frac{
+                \sum {x_i Y_i}
+            }{
+                \sum x_i^2
+            }\right]
+            \\
+            &=
+            \frac{
+                \sum {x_i^2}
+            }{
+                \sum x_i^2 \sum x_i^2
+            } \Var[Y_i]
+            \\
+            &=
+            \frac{
+                \sum {x_i^2}
+            }{
+                \sum x_i^2 \sum x_i^2
+            } \Var[Y_i]
+            \\
+            &=
+            \frac{
+                1
+            }{
+                \sum x_i^2
+            } \Var[Y_i]
+            \\
+            &=
+            \frac{
+                1
+            }{
+                \sum x_i^2
+            } \sigma^2
+            \\
+            &=
+            \frac{
+                \sigma^2
+            }{
+                \sum x_i^2
+            }
+        \end{split}
+    \]
+
+\end{homeworkProblem}
+
+\pagebreak
+
+\begin{homeworkProblem}
+    Prove a polynomial of degree \(k\), \(a_kn^k + a_{k - 1}n^{k - 1} + \hdots
+    + a_1n^1 + a_0n^0\) is a member of \(\Theta(n^k)\) where \(a_k \hdots a_0\)
+    are nonnegative constants.
+
+    \begin{proof}
+        To prove that \(a_kn^k + a_{k - 1}n^{k - 1} + \hdots + a_1n^1 +
+        a_0n^0\), we must show the following:
+
+        \[
+            \exists c_1 \exists c_2 \forall n \geq n_0,\ {c_1 \cdot g(n) \leq
+            f(n) \leq c_2 \cdot g(n)}
+        \]
+
+        For the first inequality, it is easy to see that it holds because no
+        matter what the constants are, \(n^k \leq a_kn^k + a_{k - 1}n^{k - 1} +
+        \hdots + a_1n^1 + a_0n^0\) even if \(c_1 = 1\) and \(n_0 = 1\).  This
+        is because \(n^k \leq c_1 \cdot a_kn^k\) for any nonnegative constant,
+        \(c_1\) and \(a_k\).
+        \\
+
+        Taking the second inequality, we prove it in the following way.
+        By summation, \(\sum\limits_{i=0}^k a_i\) will give us a new constant,
+        \(A\). By taking this value of \(A\), we can then do the following:
+
+        \[
+            \begin{split}
+                a_kn^k + a_{k - 1}n^{k - 1} + \hdots + a_1n^1 + a_0n^0 &=
+                \\
+                &\leq (a_k + a_{k - 1} \hdots a_1 + a_0) \cdot n^k
+                \\
+                &= A \cdot n^k
+                \\
+                &\leq c_2 \cdot n^k
+            \end{split}
+        \]
+
+        where \(n_0 = 1\) and \(c_2 = A\). \(c_2\) is just a constant. Thus the
+        proof is complete.
+    \end{proof}
+\end{homeworkProblem}
+
+\end{document}
